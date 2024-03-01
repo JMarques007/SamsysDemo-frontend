@@ -50,6 +50,16 @@
   width: 100%;
 }
 
+.btnCreateClient {
+  margin-top: 1em;
+  width: 100%;
+}
+
+.btnBackList {
+  margin-top: 1em;
+  width: 100%;
+}
+
 .success {
   color: green;
   font-weight: bold;
