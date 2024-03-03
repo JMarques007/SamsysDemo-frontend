@@ -26,7 +26,7 @@ export default function ClientStatusComponent({ id, isActive, xl, style, setErro
             return;
         }
 
-        setSuccessMessage("Cliente ativado com sucesso");
+        setSuccessMessage("Client activated successfully");
         setErrorMessage("");
         setIsClientActive(true);
     }
@@ -44,7 +44,7 @@ export default function ClientStatusComponent({ id, isActive, xl, style, setErro
             return;
         }
 
-        setSuccessMessage("Cliente desativado com sucesso");
+        setSuccessMessage("Client successfully deactivated");
         setErrorMessage("");
         setIsClientActive(false);
     }
@@ -54,14 +54,14 @@ export default function ClientStatusComponent({ id, isActive, xl, style, setErro
             {isClientActive == true &&
                 <button style={{ ...style }}
                     onClick={disableClient}>
-                    Desativar
+                    Disable
                 </button>
             }
 
             {isClientActive == false &&
                 <button style={{ ...style }}
                     onClick={enableClient}>
-                    Ativar
+                    Activate
                 </button>
             }
         </Col>

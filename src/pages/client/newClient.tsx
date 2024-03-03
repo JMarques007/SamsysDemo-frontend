@@ -38,17 +38,17 @@ export default function NewClient() {
             <div style={{ width: "100%" }}>
                 <Row>
                     <Col xl={12}>
-                        <h1>Criar Cliente</h1>
+                        <h1>New Client</h1>
                     </Col>
                 </Row>
             </div>
 
             <div style={{ width: "20%", marginTop: "2em", display: "inline-block" }}>
                 <Row>
-                    <Col xl={6} style={{ textAlign: "right" }}>
+                    <Col xl={3} className="form-label" style={{ textAlign: "right" }}>
                         <label>Name: </label>
                     </Col>
-                    <Col xl={6}>
+                    <Col xl={9} className="form-input">
 
                         <input
                             type="text"
@@ -66,10 +66,10 @@ export default function NewClient() {
                 </Row>
 
                 <Row>
-                    <Col xl={6} style={{ textAlign: "right" }}>
+                    <Col xl={3} className="form-label" style={{ textAlign: "right" }}>
                         <label>Contact: </label>
                     </Col>
-                    <Col xl={6}>
+                    <Col xl={9} className="form-input">
                         <input
                             type="text"
                             value={newClient?.phoneNumber ?? ""}
@@ -85,10 +85,10 @@ export default function NewClient() {
                     </Col>
                 </Row>
                 <Row>
-                    <Col xl={6} style={{ textAlign: "right" }}>
-                        <label>Data de Nascimento: </label>
+                    <Col xl={3} className="form-label" style={{ textAlign: "right" }}>
+                        <label>Birthday: </label>
                     </Col>
-                    <Col xl={6}>
+                    <Col xl={9} className="form-input">
                         <input
                             type="date"
                             value={newClient?.birthday ? newClient.birthday.split('T')[0] : ""}
@@ -99,14 +99,10 @@ export default function NewClient() {
 
                 <Row>
                     <Col xl={4}>
-                        <button className="btnBackList" onClick={routeChange}>
-                            {'<-Back'}
-                        </button>
+                       <button className="btn btn-light btnBackList" onClick={routeChange}>← Back</button>
                     </Col>
                     <Col xl={8}>
-                        <button className="btnCreateClient" onClick={create}>
-                            Create
-                        </button>
+                        <button className="btn btn-primary btnCreateClient" onClick={create}>Create</button>
                     </Col>
                 </Row>
 
