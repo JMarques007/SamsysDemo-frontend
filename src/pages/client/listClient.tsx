@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ClientDTO } from "../../models/client/clientDTO";
 import { ClientService } from "../../services/clientService";
@@ -10,22 +10,25 @@ export default function ListClient() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
     const [errorMessage, setErrorMessage] = useState<string>();
-    
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
     const clientService = new ClientService();
     const pageSize = 5;
-    const getClientsByPage = async (pageNumber: number) => {
-        try {
-            const resultGetClients: MessagingHelper<ClientsPagedDTO | null> = await clientService.GetAllByPage(pageNumber, pageSize);
 
+    const getClientsByPage = async (pageNumber: number, searchTerm: string) => {
+        setErrorMessage("");
+
+        try {
+            const resultGetClients: MessagingHelper<ClientsPagedDTO | null> = await clientService.GetAllByPage(pageNumber, pageSize, searchTerm);
             if (resultGetClients.success) {
                 setClients(resultGetClients.obj?.clients || null);
                 const totalClients = resultGetClients.obj?.totalClients || 0;
                 setTotalPages(Math.ceil(totalClients / pageSize));
             } else {
                 setErrorMessage(resultGetClients.message);
-    
+                setClients(null);
             }
+
 
         } catch (error) {
             setErrorMessage("Error fetching clients");
@@ -33,27 +36,43 @@ export default function ListClient() {
     };
 
     useEffect(() => {
-        getClientsByPage(currentPage);
+        getClientsByPage(currentPage, searchTerm);
     }, [currentPage]);
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
 
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+    };
+
+
     return (
         <div className="container">
-
             <div className="row">
-                <div className="col-10">
+                <div className="col-12">
                     <h5 className="fw-bold mb-3">Clients</h5>
                 </div>
-                <div className="col-2 d-flex justify-content-end mb-2">
-                    <Link to="/client/new" className="btn btn-primary">New Client</Link>
+
+                <div className="col-10" >
+                    <input
+                        type="text"
+                        placeholder="Search by name"
+                        className="form-control"
+                        value={searchTerm}
+                        onChange={handleSearch}
+                    />
                 </div>
-                <div className="col-12">
+                <div className="col-2">
+                    <button className="btn btn-primary" style={{ marginRight: '2px' }} onClick={() => getClientsByPage(currentPage, searchTerm)}>Find</button>
+                    <Link to="/client/new" className="btn btn-primary">New</Link>
+                </div>
+
+                <div className="col-12" style={{ paddingTop: '1rem' }}>
                     <table className="table">
                         <thead>
-                            <tr>
+                            <tr className="header-row">
                                 <th>Client Id</th>
                                 <th>Name</th>
                                 <th>Phone Number</th>
@@ -61,8 +80,8 @@ export default function ListClient() {
                             </tr>
                         </thead>
                         <tbody>
-                            {clients?.map((client) => (
-                                <tr key={client.id}>
+                            {clients?.map((client, index) => (
+                                <tr key={client.id} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
                                     <td>
                                         <Link to={`/client/edit/${client.id}`}>
                                             {client.id}
@@ -98,16 +117,13 @@ export default function ListClient() {
                     </div>
                 </div>
             </div>
-
             <div className="row">
                 {errorMessage &&
                     <div className="col-10">
                         <h5 className="fw-bold mb-3">{errorMessage}</h5>
                     </div>
                 }
-
             </div>
         </div>
-
     );
 }

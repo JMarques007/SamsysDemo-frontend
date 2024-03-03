@@ -69,3 +69,20 @@
   color: red;
   font-weight: bold;
 }
+
+.even-row td {
+  background-color: #f2f2f2; /* Light gray */
+}
+
+.odd-row td {
+  background-color: #ffffff; /* White */
+}
+
+.header-row th  {
+  background-color: #5c5858; 
+  color: white;
+}
+
+
+
+

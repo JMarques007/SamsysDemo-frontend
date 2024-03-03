@@ -11,13 +11,12 @@ export default function NewClient() {
     const [successMessage, setSuccessMessage] = useState<string>();
 
     const clientService = new ClientService();
-
     let navigate = useNavigate();
+
     const routeChange = () => {
         let path = `/client/list`;
         navigate(path);
     }
-
 
     const create = async () => {
         if (newClient) { 
@@ -34,7 +33,6 @@ export default function NewClient() {
         }
     }
 
-
     return (
         <>
             <div style={{ width: "100%" }}>
@@ -44,7 +42,6 @@ export default function NewClient() {
                     </Col>
                 </Row>
             </div>
-
 
             <div style={{ width: "20%", marginTop: "2em", display: "inline-block" }}>
                 <Row>
@@ -76,13 +73,11 @@ export default function NewClient() {
                         </button>
                     </Col>
                     <Col xl={8}>
-                        <button className="btnCreateClient"
-                            onClick={create}>
+                        <button className="btnCreateClient" onClick={create}>
                             Create
                         </button>
                     </Col>
                 </Row>
-
 
                 {errorMessage &&
                     <Row>

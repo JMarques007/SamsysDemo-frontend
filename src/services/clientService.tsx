@@ -30,9 +30,17 @@ export class ClientService {
         }
     }
 
-    async GetAllByPage(page: number,pageSize:number): Promise<MessagingHelper<ClientsPagedDTO | null>> {
+    async GetAllByPage(page: number,pageSize:number, searchTerm: string): Promise<MessagingHelper<ClientsPagedDTO | null>> {
+        console.log("🚀 ~ GetAllByPage ~ searchTerm:", searchTerm)
         try {
-            const result = await axios.get(`${apiBaseUrl}client?pageNumber=${page}&pageSize=${pageSize}`, {
+            let url = `${apiBaseUrl}client?pageNumber=${page}&pageSize=${pageSize}`;
+            if(searchTerm)
+            {
+                url += `&searchTerm=${searchTerm}`;
+            }
+                console.log("🚀 ~ GetAllByPage ~ url:", url)
+
+            const result = await axios.get(url, {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json"
