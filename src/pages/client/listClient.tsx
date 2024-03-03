@@ -13,7 +13,7 @@ export default function ListClient() {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const clientService = new ClientService();
-  const pageSize = 5;
+  const pageSize = 10;
 
   const getClientsByPage = async (pageNumber: number, searchTerm: string) => {
     setErrorMessage("");
@@ -22,14 +22,14 @@ export default function ListClient() {
       const resultGetClients: MessagingHelper<ClientsPagedDTO | null> =
         await clientService.GetAllByPage(pageNumber, pageSize, searchTerm);
       if (resultGetClients.success) {
-        setClients(resultGetClients.obj?.clients || null);
-
-        const totalClients = resultGetClients.obj?.totalClients || 0;
-        setTotalPages(Math.ceil(totalClients / pageSize));
+        setClients(resultGetClients.obj?.items || null);
+        const totalPages = resultGetClients.obj?.totalPages || 0;
+        setTotalPages(totalPages);
       } else {
         setErrorMessage(resultGetClients.message);
         setClients(null);
       }
+        
     } catch (error) {
       setErrorMessage("Error fetching clients");
     }

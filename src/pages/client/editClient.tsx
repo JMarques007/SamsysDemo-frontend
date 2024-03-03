@@ -54,7 +54,7 @@ export default function EditClient() {
       return;
     }
 
-    setSuccessMessage("Cliente atualizado com sucesso");
+    setSuccessMessage("Client updated successfully");
     setErrorMessage("");
     setClientToUpdate(resultUpdate.obj!);
   };
@@ -101,13 +101,17 @@ export default function EditClient() {
             <input
               type="text"
               value={clientToUpdate?.phoneNumber ?? ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setClientToUpdate((prevState) => ({
-                  ...prevState,
-                  phoneNumber: e.target.value,
-                  birthday: prevState?.birthday ?? null,
-                }))
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const inputVal = e.target.value.replace(/\D/, ""); 
+                if (inputVal.length <= 9) {
+                  // Maximum 9 digits (only PT)
+                  setClientToUpdate((prevState) => ({
+                    ...prevState,
+                    phoneNumber: inputVal,
+                    birthday: prevState?.birthday ?? null,
+                  }));
+                }
+              }}
             />
           </Col>
         </Row>
