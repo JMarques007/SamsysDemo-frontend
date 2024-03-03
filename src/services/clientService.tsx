@@ -3,6 +3,8 @@ import { ClientDTO } from "../models/client/clientDTO";
 import { ClientEditDTO } from "../models/client/clientEditDTO";
 import { MessagingHelper } from "../models/helper/messagingHelper";
 import { ClientNewDTO } from "../models/client/ClientNewDTO";
+import { ClientsPagedDTO } from "../models/client/ClientsPagedDTO";
+
 
 var apiBaseUrl = process.env.REACT_APP_API_URL;
 export class ClientService {
@@ -28,9 +30,9 @@ export class ClientService {
         }
     }
 
-    async GetAllByPage(page: number): Promise<MessagingHelper<ClientDTO[] | null>> {
+    async GetAllByPage(page: number,pageSize:number): Promise<MessagingHelper<ClientsPagedDTO | null>> {
         try {
-            const result = await axios.get(`${apiBaseUrl}client?pageNumber=${page}&pageSize=4`, {
+            const result = await axios.get(`${apiBaseUrl}client?pageNumber=${page}&pageSize=${pageSize}`, {
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json"

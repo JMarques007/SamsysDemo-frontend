@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { Col, Row } from "reactstrap";
-import { ClientDTO } from "../../models/client/clientDTO";
 import { MessagingHelper } from "../../models/helper/messagingHelper";
 import { ClientService } from "../../services/clientService";
 import { useNavigate } from "react-router-dom";
 import { ClientNewDTO } from "../../models/client/ClientNewDTO";
 
 export default function NewClient() {
-    const { id } = useParams<{ id: string; }>();
     const [newClient, setNewClient] = useState<ClientNewDTO | undefined>();
-
     const [errorMessage, setErrorMessage] = useState<string>();
     const [successMessage, setSuccessMessage] = useState<string>();
-
 
     const clientService = new ClientService();
 
@@ -23,29 +18,20 @@ export default function NewClient() {
         navigate(path);
     }
 
-    
+
     const create = async () => {
-        if (newClient) { // Check if newClient is defined before calling create
-            console.log("🚀 ~ create ~ newClient:", newClient);
-            
-            var resultUpdate: MessagingHelper<null> = await clientService.Create(newClient);
-            console.log("🚀 ~ create ~ newClient:", newClient)
-            if (resultUpdate.success == false) {
-                setErrorMessage(resultUpdate.message);
+        if (newClient) { 
+            var resultCreate: MessagingHelper<null> = await clientService.Create(newClient);
+            if (resultCreate.success == false) {
+                setErrorMessage(resultCreate.message);
                 setSuccessMessage("");
                 return;
             }
-    
             setSuccessMessage("Cliente criado com sucesso");
             setErrorMessage("");
-          //  setNewClient(resultUpdate.obj!)
         } else {
             console.error('New client data is undefined');
         }
-        
-        
-
-        
     }
 
 

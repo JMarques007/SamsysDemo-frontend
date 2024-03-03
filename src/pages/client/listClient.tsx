@@ -1,135 +1,113 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Col, Row } from "reactstrap";
-import { ClientDTO } from "../../models/client/clientDTO";
-import { ClientEditDTO } from "../../models/client/clientEditDTO";
-import { MessagingHelper } from "../../models/helper/messagingHelper";
-import { ClientService } from "../../services/clientService";
-import ClientStatusComponent from "../../components/client/statusComponent";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from "react-router-dom";
+import { ClientDTO } from "../../models/client/clientDTO";
+import { ClientService } from "../../services/clientService";
+import { ClientsPagedDTO } from "../../models/client/ClientsPagedDTO";
+import { MessagingHelper } from "../../models/helper/messagingHelper";
 
 export default function ListClient() {
-    const { id } = useParams<{ id: string; }>();
-    const [clientToUpdate, setClientToUpdate] = useState<ClientEditDTO>();
-    const [clients, setClients] = useState<null|ClientDTO[]>(null);
-    //const [isActive, setIsActive] = useState<boolean>(true);
-
+    const [clients, setClients] = useState<ClientDTO[] | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState<number>(1);
     const [errorMessage, setErrorMessage] = useState<string>();
-    const [successMessage, setSuccessMessage] = useState<string>();
+    
 
     const clientService = new ClientService();
+    const pageSize = 5;
+    const getClientsByPage = async (pageNumber: number) => {
+        try {
+            const resultGetClients: MessagingHelper<ClientsPagedDTO | null> = await clientService.GetAllByPage(pageNumber, pageSize);
 
-    const get = async () => {
-
-        const resultGetClients: MessagingHelper<ClientDTO[] |null> = await clientService.GetAllByPage(1);
+            if (resultGetClients.success) {
+                setClients(resultGetClients.obj?.clients || null);
+                const totalClients = resultGetClients.obj?.totalClients || 0;
+                setTotalPages(Math.ceil(totalClients / pageSize));
+            } else {
+                setErrorMessage(resultGetClients.message);
     
-        if (!resultGetClients.success) {
-            setErrorMessage(resultGetClients.message);
-            setSuccessMessage("");
-            return;
+            }
+
+        } catch (error) {
+            setErrorMessage("Error fetching clients");
         }
-        setClients(resultGetClients.obj); // Update state with the list of clients
-        console.log("🚀 ~ get ~ resultGetClients.obj:", resultGetClients.obj)
-        setErrorMessage("");
-    }
-        
-    
+    };
+
     useEffect(() => {
-        get();
-    }, [])
+        getClientsByPage(currentPage);
+    }, [currentPage]);
 
-    // return (
-    //     <div>
-    //         <table className="table">
-    //             <thead>
-    //                 <tr>
-    //                     <th>Id</th>
-    //                     <th>Name</th>
-    //                     <th>Phone Number</th>
-    //                     <th>Active</th>
-                        
-    //                     {/* Add more table headers for other client properties if needed */}
-    //                 </tr>
-    //             </thead>
-    //             <tbody>
-    //                 {clients?.map((client) => (
-    //                     <tr key={client.id}>
-    //                         <td>{client.id}</td>
-    //                         <td>{client.name}</td>
-    //                         <td>{client.phoneNumber}</td>
-    //                         <td>{client.isActive}</td>
-    //                     </tr>
-    //                 ))}
-    //             </tbody>
-    //         </table>
-    //     </div>
-    // );
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    };
 
- /*   return (
-        <div>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Client Id</th>
-                        <th>Name</th>
-                        <th>Phone Number</th>
-                        <th>Active</th>
-                       
-                    </tr>
-                </thead>
-                <tbody>
-
-                    {clients?.map((client) => (
-                        
-                            <tr>
-                                <td>
-                                <Link key={client.id} to={`/client/edit/${client.id}`}>
-                                {client.id}
-                                </Link></td>
-                                <td>{client.name}</td>
-                                <td>{client.phoneNumber}</td>
-                                <td>{client.isActive ? 'Active' : 'Inactive'}</td>
-                            </tr>
-                       
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );*/
     return (
-        <div>
-            <Row>
-                <Col xl={12}>
-                    <Link to="/client/new" className="btn btn-primary">Create New Client</Link>
-                </Col>
-            </Row>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Client Id</th>
-                        <th>Name</th>
-                        <th>Phone Number</th>
-                        <th>Active</th>
-                        {/* Add more table headers for other client properties if needed */}
-                    </tr>
-                </thead>
-                <tbody>
-                    {clients?.map((client) => (
-                        <tr key={client.id}>
-                            <td>
-                                <Link to={`/client/edit/${client.id}`}>
-                                    {client.id}
-                                </Link>
-                            </td>
-                            <td>{client.name}</td>
-                            <td>{client.phoneNumber}</td>
-                            <td>{client.isActive ? 'Active' : 'Inactive'}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <div className="container">
+
+            <div className="row">
+                <div className="col-10">
+                    <h5 className="fw-bold mb-3">Clients</h5>
+                </div>
+                <div className="col-2 d-flex justify-content-end mb-2">
+                    <Link to="/client/new" className="btn btn-primary">New Client</Link>
+                </div>
+                <div className="col-12">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Client Id</th>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {clients?.map((client) => (
+                                <tr key={client.id}>
+                                    <td>
+                                        <Link to={`/client/edit/${client.id}`}>
+                                            {client.id}
+                                        </Link>
+                                    </td>
+                                    <td>{client.name}</td>
+                                    <td>{client.phoneNumber}</td>
+                                    <td>{client.isActive ? 'Active' : 'Inactive'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <div className="col-12 d-flex justify-content-end mb-12">
+                        <nav>
+                            <ul className="pagination">
+                                <li className="page-item">
+                                    <button className="page-link" onClick={() => handlePageChange(currentPage - 1)} aria-label="Previous" disabled={currentPage === 1}>
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </button>
+                                </li>
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                        <button className="page-link" onClick={() => handlePageChange(i + 1)}>{i + 1}</button>
+                                    </li>
+                                ))}
+                                <li className="page-item">
+                                    <button className="page-link" onClick={() => handlePageChange(currentPage + 1)} aria-label="Next" disabled={currentPage === totalPages}>
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div className="row">
+                {errorMessage &&
+                    <div className="col-10">
+                        <h5 className="fw-bold mb-3">{errorMessage}</h5>
+                    </div>
+                }
+
+            </div>
         </div>
+
     );
-    
 }
