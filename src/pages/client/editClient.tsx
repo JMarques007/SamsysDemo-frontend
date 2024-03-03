@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Row } from "reactstrap";
 import { ClientDTO } from "../../models/client/clientDTO";
@@ -12,14 +12,11 @@ export default function EditClient() {
     const { id } = useParams<{ id: string; }>();
     const [clientToUpdate, setClientToUpdate] = useState<ClientEditDTO>();
     const [isActive, setIsActive] = useState<boolean>(true);
-
     const [errorMessage, setErrorMessage] = useState<string>();
     const [successMessage, setSuccessMessage] = useState<string>();
-
-
     const clientService = new ClientService();
-
     let navigate = useNavigate();
+
     const routeChange = () => {
         let path = `/client/list`;
         navigate(path);
@@ -37,7 +34,8 @@ export default function EditClient() {
         var client: ClientEditDTO = {
             name: resultGetClient.obj!.name,
             phoneNumber: resultGetClient.obj!.phoneNumber,
-            concurrencyToken: resultGetClient.obj!.concurrencyToken
+            concurrencyToken: resultGetClient.obj!.concurrencyToken,
+            birthday: resultGetClient.obj!.birthday
         }
 
         setErrorMessage("");
@@ -73,16 +71,24 @@ export default function EditClient() {
                 </Row>
             </div>
 
-
             <div style={{ width: "20%", marginTop: "2em", display: "inline-block" }}>
                 <Row>
                     <Col xl={6} style={{ textAlign: "right" }}>
                         <label>Nome: </label>
                     </Col>
                     <Col xl={6}>
-                        <input type="text"
+                        <input
+                            type="text"
                             value={clientToUpdate?.name ?? ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setClientToUpdate({ ...clientToUpdate, name: e.target.value })} />
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setClientToUpdate((prevState) => ({
+                                    ...prevState,
+                                    name: e.target.value,
+                                    birthday: prevState?.birthday ?? null, // Ensure the correct type for birthday
+                                }))
+                            }
+                        />
+
                     </Col>
                 </Row>
 
@@ -91,9 +97,32 @@ export default function EditClient() {
                         <label>Contacto: </label>
                     </Col>
                     <Col xl={6}>
-                        <input type="text"
+                        <input
+                            type="text"
                             value={clientToUpdate?.phoneNumber ?? ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setClientToUpdate({ ...clientToUpdate, phoneNumber: e.target.value })} />
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setClientToUpdate((prevState) => ({
+                                    ...prevState,
+                                    phoneNumber: e.target.value,
+                                    birthday: prevState?.birthday ?? null,
+                                }))
+                            }
+                        />
+
+                    </Col>
+                </Row>
+
+
+                <Row>
+                    <Col xl={6} style={{ textAlign: "right" }}>
+                        <label>Data de Nascimento: </label>
+                    </Col>
+                    <Col xl={6}>
+                        <input
+                            type="date"
+                            value={clientToUpdate?.birthday ? clientToUpdate.birthday.split('T')[0] : ""}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setClientToUpdate({ ...clientToUpdate, birthday: e.target.value || null })}
+                        />
                     </Col>
                 </Row>
 
@@ -104,8 +133,7 @@ export default function EditClient() {
                         </button>
                     </Col>
                     <Col xl={8}>
-                        <button className="btnUpdateClient"
-                            onClick={update}>
+                        <button className="btnUpdateClient" onClick={update}>
                             Atualizar
                         </button>
                     </Col>

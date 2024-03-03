@@ -84,5 +84,26 @@
 }
 
 
+.text-right {
+  text-align: right;
+  
+}
+
+.text-left {
+  text-align: left;
+}
+
+.col-name
+{
+  width: 40%;
+}
+
+.col-contact
+{
+  width: 20%;
+}
+
+
+
 
 

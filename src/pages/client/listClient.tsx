@@ -22,12 +22,14 @@ export default function ListClient() {
             const resultGetClients: MessagingHelper<ClientsPagedDTO | null> = await clientService.GetAllByPage(pageNumber, pageSize, searchTerm);
             if (resultGetClients.success) {
                 setClients(resultGetClients.obj?.clients || null);
+                console.log("🚀 ~ getClientsByPage ~ resultGetClients.obj?.clients:", resultGetClients.obj?.clients)
                 const totalClients = resultGetClients.obj?.totalClients || 0;
                 setTotalPages(Math.ceil(totalClients / pageSize));
             } else {
                 setErrorMessage(resultGetClients.message);
                 setClients(null);
             }
+                
 
 
         } catch (error) {
@@ -74,8 +76,9 @@ export default function ListClient() {
                         <thead>
                             <tr className="header-row">
                                 <th>Client Id</th>
-                                <th>Name</th>
-                                <th>Phone Number</th>
+                                <th className="text-left col-name">Name</th>
+                                <th className="text-right col-contact">Phone Number</th>
+                                <th >Birthday</th>
                                 <th>Active</th>
                             </tr>
                         </thead>
@@ -87,8 +90,9 @@ export default function ListClient() {
                                             {client.id}
                                         </Link>
                                     </td>
-                                    <td>{client.name}</td>
-                                    <td>{client.phoneNumber}</td>
+                                    <td className="text-left col-name">{client.name}</td>
+                                    <td className="text-right col-contact">{client.phoneNumber}</td>
+                                    <td>{client.birthday ? client.birthday.split('T')[0] : ""}</td>
                                     <td>{client.isActive ? 'Active' : 'Inactive'}</td>
                                 </tr>
                             ))}

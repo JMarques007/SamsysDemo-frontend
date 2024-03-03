@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ClientNewDTO } from "../../models/client/ClientNewDTO";
 
 export default function NewClient() {
-    const [newClient, setNewClient] = useState<ClientNewDTO | undefined>();
+    const [newClient, setNewClient] = useState<ClientNewDTO | null | undefined>();
     const [errorMessage, setErrorMessage] = useState<string>();
     const [successMessage, setSuccessMessage] = useState<string>();
 
@@ -19,14 +19,14 @@ export default function NewClient() {
     }
 
     const create = async () => {
-        if (newClient) { 
+        if (newClient) {
             var resultCreate: MessagingHelper<null> = await clientService.Create(newClient);
             if (resultCreate.success == false) {
                 setErrorMessage(resultCreate.message);
                 setSuccessMessage("");
                 return;
             }
-            setSuccessMessage("Cliente criado com sucesso");
+            setSuccessMessage("Client created successfully");
             setErrorMessage("");
         } else {
             console.error('New client data is undefined');
@@ -46,23 +46,54 @@ export default function NewClient() {
             <div style={{ width: "20%", marginTop: "2em", display: "inline-block" }}>
                 <Row>
                     <Col xl={6} style={{ textAlign: "right" }}>
-                        <label>Nome: </label>
+                        <label>Name: </label>
                     </Col>
                     <Col xl={6}>
-                        <input type="text"
+
+                        <input
+                            type="text"
                             value={newClient?.name ?? ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({ ...newClient, name: e.target.value })} />
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setNewClient((prevState) => ({
+                                    ...prevState,
+                                    name: e.target.value,
+                                    birthday: prevState?.birthday ?? null, // Ensure the correct type for birthday
+                                }))
+                            }
+                        />
+
                     </Col>
                 </Row>
 
                 <Row>
                     <Col xl={6} style={{ textAlign: "right" }}>
-                        <label>Contacto: </label>
+                        <label>Contact: </label>
                     </Col>
                     <Col xl={6}>
-                        <input type="text"
+                        <input
+                            type="text"
                             value={newClient?.phoneNumber ?? ""}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({ ...newClient, phoneNumber: e.target.value })} />
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setNewClient((prevState) => ({
+                                    ...prevState,
+                                    phoneNumber: e.target.value,
+                                    birthday: prevState?.birthday ?? null, // Ensure the correct type for birthday
+                                }))
+                            }
+                        />
+
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xl={6} style={{ textAlign: "right" }}>
+                        <label>Data de Nascimento: </label>
+                    </Col>
+                    <Col xl={6}>
+                        <input
+                            type="date"
+                            value={newClient?.birthday ? newClient.birthday.split('T')[0] : ""}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClient({ ...newClient, birthday: e.target.value || null })}
+                        />
                     </Col>
                 </Row>
 
