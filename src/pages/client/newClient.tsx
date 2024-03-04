@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { Col, Row } from "reactstrap";
-import { ClientDTO } from "../../models/client/clientDTO";
-import { ClientEditDTO } from "../../models/client/clientEditDTO";
 import { MessagingHelper } from "../../models/helper/messagingHelper";
 import { ClientService } from "../../services/clientService";
-import ClientStatusComponent from "../../components/client/statusComponent";
 import { useNavigate } from "react-router-dom";
+import { ClientNewDTO } from "../../models/client/ClientNewDTO";
 
-export default function EditClient() {
-  const { id } = useParams<{ id: string }>();
-  const [clientToUpdate, setClientToUpdate] = useState<ClientEditDTO>();
-  const [isActive, setIsActive] = useState<boolean>(true);
+export default function NewClient() {
+  const [newClient, setNewClient] = useState<ClientNewDTO | null | undefined>();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
+
   const clientService = new ClientService();
   let navigate = useNavigate();
 
@@ -22,53 +18,30 @@ export default function EditClient() {
     navigate(path);
   };
 
-  const get = async () => {
-    var resultGetClient: MessagingHelper<ClientDTO | null> =
-      await clientService.Get(Number(id));
-
-    if (resultGetClient.success == false) {
-      setErrorMessage(resultGetClient.message);
-      setSuccessMessage("");
-      return;
+  const create = async () => {
+    if (newClient) {
+      var resultCreate: MessagingHelper<null> = await clientService.Create(
+        newClient
+      );
+      if (resultCreate.success == false) {
+        setErrorMessage(resultCreate.message);
+        setSuccessMessage("");
+        return;
+      }
+      setSuccessMessage("Client created successfully");
+      setErrorMessage("");
+    } else {
+      console.error("New client data is undefined");
     }
-
-    var client: ClientEditDTO = {
-      name: resultGetClient.obj!.name,
-      phoneNumber: resultGetClient.obj!.phoneNumber,
-      concurrencyToken: resultGetClient.obj!.concurrencyToken,
-      birthday: resultGetClient.obj!.birthday,
-    };
-
-    setErrorMessage("");
-    setClientToUpdate(client);
-    setIsActive(resultGetClient.obj!.isActive);
+        
   };
-
-  const update = async () => {
-    var resultUpdate: MessagingHelper<ClientDTO | null> =
-      await clientService.Update(Number(id), clientToUpdate!);
-
-    if (resultUpdate.success == false) {
-      setErrorMessage(resultUpdate.message);
-      setSuccessMessage("");
-      return;
-    }
-    get();
-    setSuccessMessage("Client updated successfully");
-    setErrorMessage("");
-    setClientToUpdate(resultUpdate.obj!);
-  };
-
-  useEffect(() => {
-    get();
-  }, []);
 
   return (
     <>
       <div style={{ width: "100%" }}>
         <Row>
           <Col xl={12}>
-            <h1>Edit Client</h1>
+            <h1>New Client</h1>
           </Col>
         </Row>
       </div>
@@ -81,9 +54,9 @@ export default function EditClient() {
           <Col xl={9} className="form-input">
             <input
               type="text"
-              value={clientToUpdate?.name ?? ""}
+              value={newClient?.name ?? ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setClientToUpdate((prevState) => ({
+                setNewClient((prevState) => ({
                   ...prevState,
                   name: e.target.value,
                   birthday: prevState?.birthday ?? null, // Ensure the correct type for birthday
@@ -100,12 +73,12 @@ export default function EditClient() {
           <Col xl={9} className="form-input">
             <input
               type="text"
-              value={clientToUpdate?.phoneNumber ?? ""}
+              value={newClient?.phoneNumber ?? ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const inputVal = e.target.value.replace(/\D/, ""); 
+                const inputVal = e.target.value.replace(/\D/, "");
                 if (inputVal.length <= 9) {
                   // Maximum 9 digits (only PT)
-                  setClientToUpdate((prevState) => ({
+                  setNewClient((prevState) => ({
                     ...prevState,
                     phoneNumber: inputVal,
                     birthday: prevState?.birthday ?? null,
@@ -115,7 +88,6 @@ export default function EditClient() {
             />
           </Col>
         </Row>
-
         <Row>
           <Col xl={3} className="form-label" style={{ textAlign: "right" }}>
             <label>Birthday: </label>
@@ -124,15 +96,10 @@ export default function EditClient() {
             <input
               type="date"
               value={
-                clientToUpdate?.birthday
-                  ? clientToUpdate.birthday.split("T")[0]
-                  : ""
+                newClient?.birthday ? newClient.birthday.split("T")[0] : ""
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setClientToUpdate({
-                  ...clientToUpdate,
-                  birthday: e.target.value || null,
-                })
+                setNewClient({ ...newClient, birthday: e.target.value || null })
               }
             />
           </Col>
@@ -144,26 +111,14 @@ export default function EditClient() {
               ← Back
             </button>
           </Col>
-
           <Col xl={8}>
             <button
               className="btn btn-primary btnCreateClient"
-              onClick={update}
+              onClick={create}
             >
-              Update
+              Create
             </button>
           </Col>
-        </Row>
-
-        <Row>
-          <ClientStatusComponent
-            id={Number(id)}
-            isActive={isActive}
-            xl={12}
-            style={{ width: "100%", marginTop: "1em" }}
-            setErrorMessage={setErrorMessage}
-            setSuccessMessage={setSuccessMessage}
-          />
         </Row>
 
         {errorMessage && (

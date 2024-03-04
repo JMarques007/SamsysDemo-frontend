@@ -50,6 +50,16 @@
   width: 100%;
 }
 
+.btnCreateClient {
+  margin-top: 1em;
+  width: 100%;
+}
+
+.btnBackList {
+  margin-top: 1em;
+  width: 100%;
+}
+
 .success {
   color: green;
   font-weight: bold;
@@ -58,4 +68,65 @@
 .error {
   color: red;
   font-weight: bold;
+}
+
+.even-row td {
+  background-color: #f2f2f2; /* Light gray */
+}
+
+.odd-row td {
+  background-color: #ffffff; /* White */
+}
+
+.header-row th  {
+  background-color: #5c5858; 
+  color: white;
+}
+
+
+.text-right {
+  text-align: right;
+  
+}
+
+.text-left {
+  text-align: left;
+}
+
+.col-name
+{
+  width: 40%;
+}
+
+.col-contact
+{
+  width: 20%;
+}
+
+
+.form-label
+{
+  font-weight: bold;
+}
+
+/* .form-input
+{
+  width: 200px;
+} */
+.btn-label {
+	position: relative;
+	left: -12px;
+	display: inline-block;
+	padding: 6px 12px;
+	background: rgba(0, 0, 0, 0.15);
+	border-radius: 3px 0 0 3px;
+}
+
+.btn-labeled {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.btn {
+	margin-bottom: 10px;
 }
