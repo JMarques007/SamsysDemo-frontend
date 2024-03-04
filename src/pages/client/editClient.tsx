@@ -53,7 +53,7 @@ export default function EditClient() {
       setSuccessMessage("");
       return;
     }
-
+    get();
     setSuccessMessage("Client updated successfully");
     setErrorMessage("");
     setClientToUpdate(resultUpdate.obj!);
